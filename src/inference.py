@@ -1,4 +1,5 @@
 import pandas as pd
+from src.features import create_churn_features
 
 
 def predict_churn_probability(model, X: pd.DataFrame) -> pd.DataFrame:
@@ -35,11 +36,36 @@ def add_risk_tiers(df: pd.DataFrame, prob_col: str = "churn_probability") -> pd.
     df["risk_tier"] = df[prob_col].apply(assign_risk_tier)
     return df
 
-def prepare_scored_output(base_df: pd.DataFrame, scored_df: pd.DataFrame) -> pd.DataFrame:
+
+def prepare_single_customer_features(input_df: pd.DataFrame) -> pd.DataFrame:
     """
-    Attach key business columns back to scored predictions.
+    Apply feature engineering for incoming raw customer data.
     """
-    output = scored_df.copy()
-    for col in ["customerID", "Churn", "MonthlyCharges", "TotalCharges", "tenure", "Contract", "PaymentMethod"]:
-        output[col] = base_df[col].values
-    return output
+    df = input_df.copy()
+    df = create_churn_features(df)
+    return df
+
+
+def score_single_customer(model, input_df: pd.DataFrame) -> dict:
+    """
+    Score a single customer record and return prediction output.
+    """
+    featured_df = prepare_single_customer_features(input_df)
+
+    X = featured_df.copy()
+    if "customerID" in X.columns:
+        X = X.drop(columns=["customerID"])
+
+    probs = model.predict_proba(X)[:, 1]
+    preds = model.predict(X)
+
+    probability = float(probs[0])
+    prediction = int(preds[0])
+    risk_tier = assign_risk_tier(probability)
+
+    return {
+        "churn_probability": round(probability, 4),
+        "predicted_churn": prediction,
+        "predicted_label": "Yes" if prediction == 1 else "No",
+        "risk_tier": risk_tier
+    }
