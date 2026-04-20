@@ -73,10 +73,10 @@ def train_and_evaluate(X_train, X_test, y_train, y_test):
 
     return results
 
-
 def select_best_model(results):
     best_model_name = max(results, key=lambda x: results[x]["auc"])
     best_model = results[best_model_name]["model"]
+    best_auc = results[best_model_name]["auc"]
 
-    print(f"Best model: {best_model_name}")
+    print(f"Best model: {best_model_name} | AUC: {best_auc:.4f}")
     return best_model
