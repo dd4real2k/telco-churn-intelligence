@@ -26,3 +26,16 @@ telco-churn-intelligence/
 ├─ tests/
 ├─ requirements.txt
 └─ README.md
+
+Executive summary
+Business problem
+Dataset overview
+Key findings
+Model results
+Retention simulation results
+Project architecture
+API usage
+Dashboard usage
+Screenshots
+How to run locally
+Future improvements
