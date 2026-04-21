@@ -1,5 +1,3 @@
-# Telco Churn Intelligence
-
 # 📉 Telco Churn Intelligence
 
 An end-to-end analytics and machine learning project designed to **predict customer churn, quantify revenue at risk, and simulate retention strategies**.
